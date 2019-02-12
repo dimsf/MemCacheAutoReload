@@ -23,6 +23,7 @@ var result = await memCache.GetOrAddAutoReloadAsync("key", async() =>
 T GetOrAddAutoReloadAsync<T>(string key, Action<T> valueProvider, TimeSpan refreshInterval)
 ```
 
+#### Example
 ```csharp
 IMemoryCache memCache = ...;
 var result = memCache.GetOrAddAutoReloadAsync("key", () => 
