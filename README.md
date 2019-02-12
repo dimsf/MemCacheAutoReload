@@ -33,3 +33,13 @@ var result = memCache.GetOrAddAutoReloadAsync("key", () =>
 ```
 
 The GetOrAddAutoReaload/GetOrAddAutoReloadAsync are thread safe. The value generated is cached, and only one thread at a time executes the value provider. The cached value is returned in case a thread executes the value provider to refresh the current value, so there is no blocking except the first time, where no cached value if available.
+
+#### Set value
+````csharp
+void SetAutoReload<T>(string key, Func<T> valueProvider, TimeSpan refreshInterval)
+````
+
+#### Remove value
+````csharp
+void RemoveAutoReload(string key)
+````
