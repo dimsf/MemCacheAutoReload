@@ -36,10 +36,10 @@ The GetOrAddAutoReaload/GetOrAddAutoReloadAsync are thread safe. The value gener
 
 #### Set value
 ````csharp
-void SetAutoReload<T>(string key, Func<T> valueProvider, TimeSpan refreshInterval)
+memCache.SetAutoReload("testKey", () = > "a test value", TimeSpan.FromSeconds(2));
 ````
 
 #### Remove value
 ````csharp
-void RemoveAutoReload(string key)
+memCache.RemoveAutoReload("testKey");
 ````
