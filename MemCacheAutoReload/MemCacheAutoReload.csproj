@@ -8,6 +8,8 @@
     <PackageLicenseUrl>https://github.com/fousteris-dim/MemCacheAutoReload/blob/master/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/fousteris-dim/MemCacheAutoReload/</RepositoryUrl>
     <Description>Extension methods for ASP.NET Core MemoryCache, to support automatic, thread-safe lazy initialization of cache entries.</Description>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
