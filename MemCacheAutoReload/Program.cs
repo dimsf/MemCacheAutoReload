@@ -87,39 +87,12 @@ namespace Dimf.Extensions.Caching.Memory
             lockObj.Wait();
 
             if (!memCache.TryGetValue(key, out value))
-            {
-                //Run in background task to prevent blocking
-                //in case a cached value exists.
-                Task<T> refreshTask = Task.Run(() =>
+            { 
                 {
-                    try
-                    {
-                        value = valueProvider();
-                        memCache.SetNewValue(key, value, refreshInterval);
-                    }
-                    catch
-                    {
-                        throw;
-                    }
-                    finally
-                    {
-                        lockObj.Release();
-                    }
-
-                    return value;
-                });
-
-                if (hasCachedValue)
-                {
-                    value = oldValue;
+                    value = valueProvider();
+                    memCache.SetNewValue(key, value, refreshInterval);
                 }
-                else
-                {
-                    return refreshTask.Result;
-                }
-            }
-            else
-            {
+
                 lockObj.Release();
             }
 
@@ -151,41 +124,11 @@ namespace Dimf.Extensions.Caching.Memory
 
             if (!memCache.TryGetValue(key, out value))
             {
-                //Run in background task to prevent blocking
-                //in case a cached value exists.
-                Task<T> refreshTask = Task.Run(async () =>
-                {
-
-                    try
-                    {
-                        value = await valueProvider();
-                        memCache.SetNewValue(key, value, refreshInterval);
-                    }
-                    catch
-                    {
-                        throw;
-                    }
-                    finally
-                    {
-                        lockObj.Release();
-                    }
-
-                    return value;
-                });
-
-                if (hasCachedValue)
-                {
-                    value = oldValue;
-                }
-                else
-                {
-                    return await refreshTask.ConfigureAwait(false);
-                }
+                value = await valueProvider();
+                memCache.SetNewValue(key, value, refreshInterval);
             }
-            else
-            {
-                lockObj.Release();
-            }
+            
+            lockObj.Release();
 
             return value;
         }
