@@ -47,7 +47,7 @@ namespace Dimf.Extensions.Caching.Memory
         public static async Task SetAutoReloadAsync<T>(this IMemoryCache memCache, string key, Func<Task<T>> valueProvider, TimeSpan refreshInterval)
         {
             await lockObj.WaitAsync();
-
+            
             try
             {
                 var result = await valueProvider();
@@ -147,6 +147,7 @@ namespace Dimf.Extensions.Caching.Memory
             //Neither cached entry found.
             T value;
 
+            await lockObj.WaitAsync();
 
             if (!memCache.TryGetValue(key, out value))
             {
