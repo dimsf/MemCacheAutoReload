@@ -27,6 +27,7 @@ namespace Tests
         public void TestRemoveAutoReload()
         {
             IMemoryCache memCache = new MemoryCache(new MemoryCacheOptions());
+            memCache.GetOrAddAutoReload("testKey", () => "testValue", TimeSpan.FromMinutes(1));
             memCache.RemoveAutoReload("testKey");
             Assert.AreEqual(memCache.Get<string>("testKey"), null);
         }
