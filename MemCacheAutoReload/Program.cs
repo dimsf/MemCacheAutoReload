@@ -69,9 +69,9 @@ namespace Dimf.Extensions.Caching.Memory
         /// </summary>
         public static T GetOrAddAutoReload<T>(this IMemoryCache memCache, string key, Func<T> valueProvider, TimeSpan refreshInterval)
         {
-            if (memCache.TryGetValue(key, out T currValue))
+            if(memCache.GetExistingValue(key, out T value))
             {
-                return currValue;
+                return value;
             }
 
             //Key not exists. Search in cached entry.
@@ -82,7 +82,6 @@ namespace Dimf.Extensions.Caching.Memory
             }
 
             //Neither cached entry found.
-            T value;
 
             lockObj.Wait();
 
@@ -105,21 +104,12 @@ namespace Dimf.Extensions.Caching.Memory
         /// </summary>
         public static async Task<T> GetOrAddAutoReloadAsync<T>(this IMemoryCache memCache, string key, Func<Task<T>> valueProvider, TimeSpan refreshInterval)
         {
-            if (memCache.TryGetValue(key, out T currValue))
+            if (memCache.GetExistingValue(key, out T value))
             {
-                return currValue;
-            }
-
-            //Key not exists. Search in cached entry.
-            bool hasCachedValue = memCache.TryGetValue(GetCacheKey(key), out T oldValue);
-            if (hasCachedValue && lockObj.CurrentCount == 0)
-            {
-                return oldValue;
+                return value;
             }
 
             //Neither cached entry found.
-            T value;
-
             await lockObj.WaitAsync();
 
             if (!memCache.TryGetValue(key, out value))
@@ -131,6 +121,28 @@ namespace Dimf.Extensions.Caching.Memory
             lockObj.Release();
 
             return value;
+        }
+
+        private static bool GetExistingValue<T>(this IMemoryCache memCache, string key, out T value)
+        {
+            bool found = false;
+            value = default;
+
+            if (memCache.TryGetValue(key, out T currValue))
+            {
+                found = true;
+                value = currValue;
+            }
+
+            //Key not exists. Search in cached entry.
+            bool hasCachedValue = memCache.TryGetValue(GetCacheKey(key), out T oldValue);
+            if (hasCachedValue && lockObj.CurrentCount == 0)
+            {
+                found = true;
+                value = oldValue;
+            }
+
+            return found;
         }
 
         private static void SetNewValue<T>(this IMemoryCache memCache, string key, T value, TimeSpan refreshInterval)
