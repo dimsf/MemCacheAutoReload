@@ -3,7 +3,7 @@ Extension methods for ASP.NET Core MemoryCache, to support automatic, thread-saf
 
 # Installation
 ```
-Install-Package MemCacheAutoReload -Version 1.1.0
+Install-Package MemCacheAutoReload -Version 1.2.0
 ```
 
 # Usage
