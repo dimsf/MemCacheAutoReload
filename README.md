@@ -1,6 +1,11 @@
 # MemCacheAutoReload
 Extension methods for ASP.NET Core MemoryCache, to support automatic, thread-safe lazy initialization of cache entries.
 
+# Installation
+```
+Install-Package MemCacheAutoReload -Version 1.1.0
+```
+
 # Usage
 #### Add or get entry(async version)
 
