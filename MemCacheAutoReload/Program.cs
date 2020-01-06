@@ -79,11 +79,21 @@ namespace Dimf.Extensions.Caching.Memory
             lockObj.Wait();
 
             if (!memCache.TryGetValue(key, out value))
-            { 
-                value = valueProvider();
-                memCache.SetNewValue(key, value, refreshInterval);
-                
-                lockObj.Release();
+            {
+                try
+                {
+                    value = valueProvider();
+                    memCache.SetNewValue(key, value, refreshInterval);
+                }
+                catch
+                {
+                    lockObj.Release();
+                    throw;
+                }
+                finally
+                {
+                    lockObj.Release();
+                }
             }
 
             return value;
@@ -105,11 +115,21 @@ namespace Dimf.Extensions.Caching.Memory
 
             if (!memCache.TryGetValue(key, out value))
             {
-                value = await valueProvider();
-                memCache.SetNewValue(key, value, refreshInterval);
+                try
+                {
+                    value = await valueProvider();
+                    memCache.SetNewValue(key, value, refreshInterval);
+                }
+                catch
+                {
+                    lockObj.Release();
+                    throw;
+                }
+                finally
+                {
+                    lockObj.Release();
+                }
             }
-            
-            lockObj.Release();
 
             return value;
         }
