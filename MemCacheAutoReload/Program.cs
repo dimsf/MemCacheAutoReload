@@ -69,16 +69,9 @@ namespace Dimf.Extensions.Caching.Memory
         /// </summary>
         public static T GetOrAddAutoReload<T>(this IMemoryCache memCache, string key, Func<T> valueProvider, TimeSpan refreshInterval)
         {
-            if(memCache.GetExistingValue(key, out T value))
+            if (memCache.GetExistingValue(key, out T value))
             {
                 return value;
-            }
-
-            //Key not exists. Search in cached entry.
-            bool hasCachedValue = memCache.TryGetValue(GetCacheKey(key), out T oldValue);
-            if (hasCachedValue && lockObj.CurrentCount == 0)
-            {
-                return oldValue;
             }
 
             //Neither cached entry found.
@@ -87,11 +80,9 @@ namespace Dimf.Extensions.Caching.Memory
 
             if (!memCache.TryGetValue(key, out value))
             { 
-                {
-                    value = valueProvider();
-                    memCache.SetNewValue(key, value, refreshInterval);
-                }
-
+                value = valueProvider();
+                memCache.SetNewValue(key, value, refreshInterval);
+                
                 lockObj.Release();
             }
 
